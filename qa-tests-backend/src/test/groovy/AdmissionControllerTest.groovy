@@ -89,7 +89,6 @@ class AdmissionControllerTest extends BaseSpecification {
         // period, which should be sufficient for K8s to pick up readiness changes and update endpoints.
         chaosMonkey = new ChaosMonkey(orchestrator, 1, 10L)
     }
-
     def cleanup() {
         if (chaosMonkey) {
             chaosMonkey.stop()
