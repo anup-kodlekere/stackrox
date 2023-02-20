@@ -126,13 +126,15 @@ type ClustersForPermissionRequest = {
     permissions: string[];
 };
 
-export type ClusterForPermissions = {
+// ScopeObject represents the (ID, name) pair identifying elements that belong to
+// the access scope of a user.
+export type ScopeObject = {
     id: string;
     name: string;
 };
 
 export type ClustersForPermissionsResponse = {
-    clusters: ClusterForPermissions[];
+    clusters: ScopeObject[];
 };
 
 export function getClustersForPermissions(
@@ -149,13 +151,8 @@ type NamespacesForClusterAndPermissionsRequest = {
     permissions: string[];
 };
 
-export type NamespaceForClusterAndPermissions = {
-    id: string;
-    name: string;
-};
-
 export type NamespacesForClusterAndPermissionsResponse = {
-    namespaces: NamespaceForClusterAndPermissions[];
+    namespaces: ScopeObject[];
 };
 
 export function getNamespacesForClusterAndPermissions(
