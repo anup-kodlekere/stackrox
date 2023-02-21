@@ -12,6 +12,7 @@ import (
 	"github.com/NYTimes/gziphandler"
 	alertDatastore "github.com/stackrox/rox/central/alert/datastore"
 	alertService "github.com/stackrox/rox/central/alert/service"
+	apiTokenExpiration "github.com/stackrox/rox/central/apitoken/expiration"
 	apiTokenService "github.com/stackrox/rox/central/apitoken/service"
 	"github.com/stackrox/rox/central/audit"
 	authService "github.com/stackrox/rox/central/auth/service"
@@ -321,6 +322,9 @@ func startServices() {
 
 	if cfg := centralclient.InstanceConfig(); cfg.Enabled() {
 		cfg.Gatherer().Start(telemeter.WithGroups(cfg.GroupType, cfg.GroupID))
+	}
+	if env.PostgresDatastoreEnabled.BooleanSetting() {
+		apiTokenExpiration.Singleton().Start()
 	}
 
 	go registerDelayedIntegrations(iiStore.DelayedIntegrations)
@@ -839,6 +843,9 @@ func waitForTerminationSignal() {
 		{vulnRequestManager.Singleton(), "vuln deferral requests expiry loop"},
 		{centralclient.InstanceConfig().Gatherer(), "telemetry gatherer"},
 		{centralclient.InstanceConfig().Telemeter(), "telemetry client"},
+	}
+	if env.PostgresDatastoreEnabled.BooleanSetting() {
+		stoppables = append(stoppables, stoppableWithName{obj: apiTokenExpiration.Singleton(), name: "api token expiration notifier"})
 	}
 
 	var wg sync.WaitGroup
