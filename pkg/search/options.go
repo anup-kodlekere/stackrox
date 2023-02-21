@@ -294,6 +294,10 @@ var (
 	CollectionName       = newFieldLabel("Collection Name")
 	EmbeddedCollectionID = newFieldLabel("Embedded Collection ID")
 
+	// API Token fields
+	Expiration = newFieldLabel("Expiration")
+	Revoked    = newFieldLabel("Revoked")
+
 	// Test Search Fields
 	TestKey               = newFieldLabel("Test Key")
 	TestKey2              = newFieldLabel("Test Key 2")
