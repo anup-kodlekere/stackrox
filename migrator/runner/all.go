@@ -129,4 +129,5 @@ import (
 	_ "github.com/stackrox/rox/migrator/migrations/m_170_to_m_171_create_policy_categories_and_edges"
 	_ "github.com/stackrox/rox/migrator/migrations/m_171_to_m_172_move_scope_to_collection_in_report_configurations"
 	_ "github.com/stackrox/rox/migrator/migrations/m_172_to_m_173_enable_search_on_api_tokens"
+	_ "github.com/stackrox/rox/migrator/migrations/m_173_to_m_174_create_notification_schedule_table"
 )
