@@ -158,11 +158,7 @@ func manageNodeScanLoop(ctx context.Context, rescanInterval time.Duration, scann
 	nodeName := getNode()
 	sensorC := make(chan *sensor.MsgFromCompliance)
 
-	go func() {
-		defer close(sensorC)
-		t := time.NewTicker(rescanInterval)
-
-		// first scan should happen on start
+	runScanFunc := func() {
 		inventory, err := scanner.Scan(nodeName)
 		if err != nil {
 			log.Errorf("error running cachedScanNode: %v", err)
@@ -174,23 +170,21 @@ func manageNodeScanLoop(ctx context.Context, rescanInterval time.Duration, scann
 			cmetrics.ObserveInventoryProtobufMessage(msg)
 			sensorC <- msg
 		}
+	}
+
+	go func() {
+		defer close(sensorC)
+		t := time.NewTicker(rescanInterval)
+
+		// first scan should happen on start
+		runScanFunc()
 
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case <-t.C:
-				inventory, err := scanner.Scan(nodeName)
-				if err != nil {
-					log.Errorf("error running cachedScanNode: %v", err)
-				} else {
-					msg := &sensor.MsgFromCompliance{
-						Node: nodeName,
-						Msg:  &sensor.MsgFromCompliance_NodeInventory{NodeInventory: inventory},
-					}
-					cmetrics.ObserveInventoryProtobufMessage(msg)
-					sensorC <- msg
-				}
+				runScanFunc()
 			}
 		}
 	}()
