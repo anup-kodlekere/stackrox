@@ -50,7 +50,7 @@ func (p *ProcessPool) add(val *storage.ProcessSignal) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
-	capacity := 10
+	capacity := 10000
 
 	size := p.getProcessPoolSize()
 	log.Infof("In add(val *storage.ProcessSignal) capacity= %i size= %i", capacity, size)
