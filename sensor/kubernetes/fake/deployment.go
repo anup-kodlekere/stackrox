@@ -69,7 +69,12 @@ func (p *ProcessPool) remove(containerID string) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
+	log.Infof("Removing processes associated with container")
+	size := p.getProcessPoolSize()
+	log.Infof("Size before removing container %i", size)
 	delete(p.ProcessPool, containerID)
+	size = p.getProcessPoolSize()
+	log.Infof("Size after removing container %i", size)
 }
 
 func (p *ProcessPool) getRandomProcess(containerID string) *storage.ProcessSignal {
