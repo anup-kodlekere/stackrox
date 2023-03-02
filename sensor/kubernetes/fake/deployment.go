@@ -36,10 +36,10 @@ func newProcessPool() *ProcessPool {
 	}
 }
 
-func (p *ProcessPool) getProcessPoolSize() {
+func (p *ProcessPool) getProcessPoolSize() int {
 	size := 0
 
-	for processPool, _ := p.ProcessPool {
+	for processPool, _ := range p.ProcessPool {
 		size += len(processPool)
 	}
 
@@ -60,7 +60,7 @@ func (p *ProcessPool) add(val *storage.ProcessSignal) {
 		nprocess := len(p.ProcessPool[val.ContainerId])
 		if nprocess > 0 {
 			randIdx := rand.Intn(nprocess)
-			p.ProcessPoll[val.ContainerId][randIdx] = val
+			p.ProcessPool[val.ContainerId][randIdx] = val
 		}
 	}
 }
