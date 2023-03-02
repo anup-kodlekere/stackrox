@@ -39,7 +39,7 @@ func newProcessPool() *ProcessPool {
 func (p *ProcessPool) getProcessPoolSize() int {
 	size := 0
 
-	for processPool, _ := range p.ProcessPool {
+	for _, processPool := range p.ProcessPool {
 		size += len(processPool)
 	}
 
@@ -502,6 +502,7 @@ func (w *WorkloadManager) managePod(ctx context.Context, deploymentSig *concurre
 
 		for _, cs := range pod.Status.ContainerStatuses {
 			containerPool.remove(getShortContainerID(cs.ContainerID))
+			log.Infof("Removing container")
 		}
 		podSig.Signal()
 	}
