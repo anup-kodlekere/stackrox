@@ -53,7 +53,6 @@ func (p *ProcessPool) add(val *storage.ProcessSignal) {
 	capacity := 10000
 
 	size := p.getProcessPoolSize()
-	log.Infof("In add(val *storage.ProcessSignal) capacity= %i size= %i", capacity, size)
 	if size < capacity {
 		p.ProcessPool[val.ContainerId] = append(p.ProcessPool[val.ContainerId], val)
 	} else {
@@ -69,12 +68,7 @@ func (p *ProcessPool) remove(containerID string) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
-	log.Infof("Removing processes associated with container")
-	size := p.getProcessPoolSize()
-	log.Infof("Size before removing container %i", size)
 	delete(p.ProcessPool, containerID)
-	size = p.getProcessPoolSize()
-	log.Infof("Size after removing container %i", size)
 }
 
 func (p *ProcessPool) getRandomProcess(containerID string) *storage.ProcessSignal {
@@ -502,7 +496,6 @@ func (w *WorkloadManager) managePod(ctx context.Context, deploymentSig *concurre
 
 		for _, cs := range pod.Status.ContainerStatuses {
 			containerPool.remove(getShortContainerID(cs.ContainerID))
-			log.Infof("Removing container")
 		}
 		podSig.Signal()
 	}
