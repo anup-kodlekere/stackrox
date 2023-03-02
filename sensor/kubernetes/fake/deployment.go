@@ -36,11 +36,33 @@ func newProcessPool() *ProcessPool {
 	}
 }
 
+func (p *ProcessPool) getProcessPoolSize() {
+	size := 0
+
+	for processPool, _ := p.ProcessPool {
+		size += len(processPool)
+	}
+
+	return size
+}
+
 func (p *ProcessPool) add(val *storage.ProcessSignal) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
-	p.ProcessPool[val.ContainerId] = append(p.ProcessPool[val.ContainerId], val)
+	capacity := 10
+
+	size := p.getProcessPoolSize()
+	log.Infof("In add(val *storage.ProcessSignal) capacity= %i size= %i", capacity, size)
+	if size < capacity {
+		p.ProcessPool[val.ContainerId] = append(p.ProcessPool[val.ContainerId], val)
+	} else {
+		nprocess := len(p.ProcessPool[val.ContainerId])
+		if nprocess > 0 {
+			randIdx := rand.Intn(nprocess)
+			p.ProcessPoll[val.ContainerId][randIdx] = val
+		}
+	}
 }
 
 func (p *ProcessPool) remove(containerID string) {
@@ -54,10 +76,10 @@ func (p *ProcessPool) getRandomProcess(containerID string) *storage.ProcessSigna
 	p.lock.Lock()
 	defer p.lock.Unlock()
 
-	size := len(processPool.ProcessPool[containerID])
+	size := len(p.ProcessPool[containerID])
 	if size > 0 {
-		randIdx := rand.Intn(len(processPool.ProcessPool[containerID]))
-		return processPool.ProcessPool[containerID][randIdx]
+		randIdx := rand.Intn(size)
+		return p.ProcessPool[containerID][randIdx]
 	}
 
 	return nil
