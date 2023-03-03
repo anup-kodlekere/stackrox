@@ -27,7 +27,7 @@ const (
 var (
 	log            = logging.LoggerForModule()
 	schema         = pkgSchema.SensorUpgradeConfigsSchema
-	targetResource = resources.Administration
+	targetResource = resources.SensorUpgradeConfig
 )
 
 // Store is the interface to interact with the storage for storage.SensorUpgradeConfig

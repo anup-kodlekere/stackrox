@@ -41,7 +41,9 @@ var (
 
 	scrapeDataDeps = []string{"HostScraped"}
 
-	complianceSAC = sac.ForResource(resources.Compliance)
+	// TODO: ROX-12750 Replace ComplianceRuns with Compliance and ComplianceRunSchedule with Administration.
+	// Rename the SAC objects to match the replacement permission name too
+	complianceRunSAC = sac.ForResource(resources.ComplianceRuns)
 )
 
 type manager struct {
@@ -178,7 +180,7 @@ func (m *manager) GetRecentRuns(ctx context.Context, request *v1.GetRecentCompli
 	// Filter out runs the user does not have read access to.
 	var returnedRuns []*v1.ComplianceRun
 	for _, run := range runs {
-		if ok, err := complianceSAC.ReadAllowed(ctx, sac.ClusterScopeKey(run.GetClusterId())); err != nil {
+		if ok, err := complianceRunSAC.ReadAllowed(ctx, sac.ClusterScopeKey(run.GetClusterId())); err != nil {
 			return nil, err
 		} else if ok {
 			returnedRuns = append(returnedRuns, run)
@@ -210,7 +212,7 @@ func (m *manager) GetRecentRun(ctx context.Context, id string) (*v1.ComplianceRu
 	}
 
 	// Check read access to the cluster the run is for.
-	if ok, err := complianceSAC.ReadAllowed(ctx, sac.ClusterScopeKey(run.ClusterId)); err != nil {
+	if ok, err := complianceRunSAC.ReadAllowed(ctx, sac.ClusterScopeKey(run.ClusterId)); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, errox.NotFound
@@ -260,7 +262,7 @@ func (m *manager) expandClusters(ctx context.Context, clusterIDOrWildcard string
 	}
 	var clusterIDs []string
 	for _, cluster := range clusters {
-		if complianceSAC.ScopeChecker(ctx, storage.Access_READ_WRITE_ACCESS).IsAllowed(sac.ClusterScopeKey(cluster.GetId())) {
+		if complianceRunSAC.ScopeChecker(ctx, storage.Access_READ_WRITE_ACCESS).IsAllowed(sac.ClusterScopeKey(cluster.GetId())) {
 			clusterIDs = append(clusterIDs, cluster.GetId())
 		}
 	}
@@ -300,7 +302,7 @@ func (m *manager) createAndLaunchRuns(ctx context.Context, clusterStandardPairs 
 	for _, clusterStandardPair := range clusterStandardPairs {
 		clusterScopes.add(clusterStandardPair.ClusterID)
 	}
-	if !complianceSAC.ScopeChecker(ctx, storage.Access_READ_WRITE_ACCESS).AllAllowed(clusterScopes.get()) {
+	if !complianceRunSAC.ScopeChecker(ctx, storage.Access_READ_WRITE_ACCESS).AllAllowed(clusterScopes.get()) {
 		return nil, sac.ErrResourceAccessDenied
 	}
 
@@ -372,7 +374,7 @@ func (m *manager) GetRunStatuses(ctx context.Context, ids ...string) ([]*v1.Comp
 	for _, runStatus := range runStatuses {
 		clusterScopes.add(runStatus.GetClusterId())
 	}
-	if !complianceSAC.ScopeChecker(ctx, storage.Access_READ_ACCESS).AllAllowed(clusterScopes.get()) {
+	if !complianceRunSAC.ScopeChecker(ctx, storage.Access_READ_ACCESS).AllAllowed(clusterScopes.get()) {
 		return nil, errox.NotFound
 	}
 

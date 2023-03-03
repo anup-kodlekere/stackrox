@@ -23,6 +23,8 @@ type sensorUpgradeConfigDataStoreTestSuite struct {
 	hasNoneCtx  context.Context
 	hasReadCtx  context.Context
 	hasWriteCtx context.Context
+	// TODO: ROX-12750 Remove hasWriteAdministrationCtx variable.
+	hasWriteAdministrationCtx context.Context
 
 	dataStore DataStore
 	storage   *storeMocks.MockStore
@@ -35,8 +37,15 @@ func (s *sensorUpgradeConfigDataStoreTestSuite) SetupTest() {
 	s.hasReadCtx = sac.WithGlobalAccessScopeChecker(context.Background(),
 		sac.AllowFixedScopes(
 			sac.AccessModeScopeKeys(storage.Access_READ_ACCESS),
-			sac.ResourceScopeKeys(resources.Administration)))
+			// TODO: ROX-12750 Replace SensorUpgradeConfig with Administration.
+			sac.ResourceScopeKeys(resources.SensorUpgradeConfig)))
 	s.hasWriteCtx = sac.WithGlobalAccessScopeChecker(context.Background(),
+		sac.AllowFixedScopes(
+			sac.AccessModeScopeKeys(storage.Access_READ_ACCESS, storage.Access_READ_WRITE_ACCESS),
+			// TODO: ROX-12750 Replace SensorUpgradeConfig with Administration.
+			sac.ResourceScopeKeys(resources.SensorUpgradeConfig)))
+	// TODO: ROX-12750 Remove hasWriteAdministrationCtx variable.
+	s.hasWriteAdministrationCtx = sac.WithGlobalAccessScopeChecker(context.Background(),
 		sac.AllowFixedScopes(
 			sac.AccessModeScopeKeys(storage.Access_READ_ACCESS, storage.Access_READ_WRITE_ACCESS),
 			sac.ResourceScopeKeys(resources.Administration)))
@@ -64,11 +73,15 @@ func (s *sensorUpgradeConfigDataStoreTestSuite) TestAllowsGet() {
 	_, err := s.dataStore.GetSensorUpgradeConfig(s.hasReadCtx)
 	s.NoError(err, "expected no error trying to read with permissions")
 
-	s.storage.EXPECT().Get(gomock.Any()).Return(nil, false, nil).Times(1)
+	// TODO: ROX-12750 Adjust the expected call count.
+	s.storage.EXPECT().Get(gomock.Any()).Return(nil, false, nil).Times(2)
 
 	_, err = s.dataStore.GetSensorUpgradeConfig(s.hasWriteCtx)
 	s.NoError(err, "expected no error trying to read with permissions")
 
+	// TODO: ROX-12750 Remove test with hasWriteAdministrationCtx variable.
+	_, err = s.dataStore.GetSensorUpgradeConfig(s.hasWriteAdministrationCtx)
+	s.NoError(err, "expected no error trying to read with Administration permissions")
 }
 
 func (s *sensorUpgradeConfigDataStoreTestSuite) TestEnforcesUpdate() {
@@ -82,9 +95,13 @@ func (s *sensorUpgradeConfigDataStoreTestSuite) TestEnforcesUpdate() {
 }
 
 func (s *sensorUpgradeConfigDataStoreTestSuite) TestAllowsUpdate() {
-	s.storage.EXPECT().Upsert(gomock.Any(), gomock.Any()).Return(nil).Times(1)
+	// TODO: ROX-12750 Adjust the expected call count.
+	s.storage.EXPECT().Upsert(gomock.Any(), gomock.Any()).Return(nil).Times(2)
 
 	err := s.dataStore.UpsertSensorUpgradeConfig(s.hasWriteCtx, &storage.SensorUpgradeConfig{})
 	s.NoError(err, "expected no error trying to write with permissions")
 
+	// TODO: ROX-12750 Remove test with hasWriteAdministrationCtx variable.
+	err = s.dataStore.UpsertSensorUpgradeConfig(s.hasWriteAdministrationCtx, &storage.SensorUpgradeConfig{})
+	s.NoError(err, "expected no error trying to write with Administration permissions")
 }

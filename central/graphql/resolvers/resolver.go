@@ -194,10 +194,12 @@ func New() *Resolver {
 
 //lint:file-ignore U1000 It's okay for some of the variables below to be unused.
 var (
-	readAccess               = readAuth(resources.Access)
-	readAlerts               = readAuth(resources.Alert)
-	readClusters             = readAuth(resources.Cluster)
-	readCompliance           = readAuth(resources.Compliance)
+	readAccess     = readAuth(resources.Access)
+	readAlerts     = readAuth(resources.Alert)
+	readClusters   = readAuth(resources.Cluster)
+	readCompliance = readAuth(resources.Compliance)
+	// TODO: ROX-12750 Remove readComplianceRuns
+	readComplianceRuns       = readAuth(resources.ComplianceRuns)
 	readCVEs                 = readAuth(resources.CVE)
 	readDeployments          = readAuth(resources.Deployment)
 	readDeploymentExtensions = readAuth(resources.DeploymentExtension)
@@ -217,8 +219,10 @@ var (
 	readServiceAccounts                  = readAuth(resources.ServiceAccount)
 	readVulnerabilityRequestsOrApprovals = anyReadAuth(resources.VulnerabilityManagementRequests, resources.VulnerabilityManagementApprovals)
 
-	writeAlerts                           = writeAuth(resources.Alert)
-	writeCompliance                       = writeAuth(resources.Compliance)
+	writeAlerts     = writeAuth(resources.Alert)
+	writeCompliance = writeAuth(resources.Compliance)
+	// TODO: ROX-12750 Remove writeComplianceRuns
+	writeComplianceRuns                   = writeAuth(resources.ComplianceRuns)
 	writeIndicators                       = writeAuth(resources.DeploymentExtension)
 	writeVulnerabilityRequests            = writeAuth(resources.VulnerabilityManagementRequests)
 	writeVulnerabilityApprovals           = writeAuth(resources.VulnerabilityManagementApprovals)

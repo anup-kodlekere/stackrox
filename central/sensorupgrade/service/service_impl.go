@@ -23,10 +23,12 @@ import (
 
 var (
 	authorizer = perrpc.FromMap(map[authz.Authorizer][]string{
-		user.With(permissions.View(resources.Administration)): {
+		// TODO: ROX-12750 Replace SensorUpgradeConfig with Administration.
+		user.With(permissions.View(resources.SensorUpgradeConfig)): {
 			"/v1.SensorUpgradeService/GetSensorUpgradeConfig",
 		},
-		user.With(permissions.Modify(resources.Administration)): {
+		// TODO: ROX-12750 Replace SensorUpgradeConfig with Administration.
+		user.With(permissions.Modify(resources.SensorUpgradeConfig)): {
 			"/v1.SensorUpgradeService/UpdateSensorUpgradeConfig",
 		},
 		user.With(permissions.Modify(resources.Cluster)): {
