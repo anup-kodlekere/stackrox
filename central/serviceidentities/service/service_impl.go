@@ -20,11 +20,13 @@ import (
 
 var (
 	authorizer = perrpc.FromMap(map[authz.Authorizer][]string{
-		user.With(permissions.View(resources.Administration)): {
+		// TODO: ROX-12750 Replace ServiceIdentity with Administration.
+		user.With(permissions.View(resources.ServiceIdentity)): {
 			"/v1.ServiceIdentityService/GetServiceIdentities",
 			"/v1.ServiceIdentityService/GetAuthorities",
 		},
-		user.With(permissions.Modify(resources.Administration)): {
+		// TODO: ROX-12750 Replace ServiceIdentity with Administration.
+		user.With(permissions.Modify(resources.ServiceIdentity)): {
 			"/v1.ServiceIdentityService/CreateServiceIdentity",
 		},
 	})

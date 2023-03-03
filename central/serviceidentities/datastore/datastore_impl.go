@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	administrationSAC = sac.ForResource(resources.Administration)
+	// TODO: ROX-12750 Replace ServiceIdentity with Administration and rename variable.
+	serviceIdentitiesSAC = sac.ForResource(resources.ServiceIdentity)
 )
 
 type dataStoreImpl struct {
@@ -18,7 +19,7 @@ type dataStoreImpl struct {
 }
 
 func (ds *dataStoreImpl) GetServiceIdentities(ctx context.Context) ([]*storage.ServiceIdentity, error) {
-	if ok, err := administrationSAC.ReadAllowed(ctx); err != nil {
+	if ok, err := serviceIdentitiesSAC.ReadAllowed(ctx); err != nil {
 		return nil, err
 	} else if !ok {
 		return nil, nil
@@ -28,7 +29,7 @@ func (ds *dataStoreImpl) GetServiceIdentities(ctx context.Context) ([]*storage.S
 }
 
 func (ds *dataStoreImpl) AddServiceIdentity(ctx context.Context, identity *storage.ServiceIdentity) error {
-	if ok, err := administrationSAC.WriteAllowed(ctx); err != nil {
+	if ok, err := serviceIdentitiesSAC.WriteAllowed(ctx); err != nil {
 		return err
 	} else if !ok {
 		return sac.ErrResourceAccessDenied

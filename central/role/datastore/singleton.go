@@ -126,7 +126,8 @@ var defaultRoles = map[string]roleAttributes{
 		resourceWithAccess: []permissions.ResourceWithAccess{
 			permissions.View(resources.Cluster),
 			permissions.Modify(resources.Cluster),
-			permissions.Modify(resources.Administration),
+			// TODO: ROX-12750 Replace ServiceIdentity with Administration.
+			permissions.Modify(resources.ServiceIdentity),
 		},
 	},
 	rolePkg.VulnMgmtApprover: {
