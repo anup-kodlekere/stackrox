@@ -20,10 +20,12 @@ import (
 
 var (
 	authorizer = perrpc.FromMap(map[authz.Authorizer][]string{
-		user.With(permissions.View(resources.Administration)): {
+		// TODO: ROX-12750 Replace DebugLogs with Administration.
+		user.With(permissions.View(resources.DebugLogs)): {
 			"/v1.TelemetryService/GetTelemetryConfiguration",
 		},
-		user.With(permissions.Modify(resources.Administration)): {
+		// TODO: ROX-12750 Replace DebugLogs with Administration.
+		user.With(permissions.Modify(resources.DebugLogs)): {
 			"/v1.TelemetryService/ConfigureTelemetry",
 		},
 		user.With(): {

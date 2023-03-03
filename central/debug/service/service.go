@@ -74,11 +74,13 @@ var (
 	log = logging.LoggerForModule()
 
 	authorizer = perrpc.FromMap(map[authz.Authorizer][]string{
-		user.With(permissions.View(resources.Administration)): {
+		// TODO: ROX-12750 Replace DebugLogs with Administration
+		user.With(permissions.View(resources.DebugLogs)): {
 			"/v1.DebugService/GetLogLevel",
 			"/v1.DebugService/StreamAuthzTraces",
 		},
-		user.With(permissions.Modify(resources.Administration)): {
+		// TODO: ROX-12750 Replace DebugLogs with Administration
+		user.With(permissions.Modify(resources.DebugLogs)): {
 			"/v1.DebugService/SetLogLevel",
 		},
 	})
@@ -474,7 +476,8 @@ func (s *serviceImpl) getConfig(_ context.Context) (interface{}, error) {
 	accessConfigCtx := sac.WithGlobalAccessScopeChecker(context.Background(),
 		sac.AllowFixedScopes(
 			sac.AccessModeScopeKeys(storage.Access_READ_ACCESS),
-			sac.ResourceScopeKeys(resources.Administration)))
+			// TODO: ROX-12750 Replace Config with Administration
+			sac.ResourceScopeKeys(resources.Config)))
 
 	return s.configDataStore.GetConfig(accessConfigCtx)
 }
@@ -483,18 +486,21 @@ func (s *serviceImpl) getConfig(_ context.Context) (interface{}, error) {
 func (s *serviceImpl) CustomRoutes() []routes.CustomRoute {
 	customRoutes := []routes.CustomRoute{
 		{
-			Route:         "/debug/dump",
-			Authorizer:    user.With(permissions.View(resources.Administration)),
+			Route: "/debug/dump",
+			// TODO: ROX-12750 Replace DebugLogs with Administration
+			Authorizer:    user.With(permissions.View(resources.DebugLogs)),
 			ServerHandler: http.HandlerFunc(s.getDebugDump),
 		},
 		{
-			Route:         "/api/extensions/diagnostics",
-			Authorizer:    user.With(permissions.View(resources.Administration)),
+			Route: "/api/extensions/diagnostics",
+			// TODO: ROX-12750 Replace DebugLogs with Administration
+			Authorizer:    user.With(permissions.View(resources.DebugLogs)),
 			ServerHandler: http.HandlerFunc(s.getDiagnosticDump),
 		},
 		{
-			Route:         "/debug/versions.json",
-			Authorizer:    user.With(permissions.View(resources.Administration)),
+			Route: "/debug/versions.json",
+			// TODO: ROX-12750 Replace DebugLogs with Administration
+			Authorizer:    user.With(permissions.View(resources.DebugLogs)),
 			ServerHandler: http.HandlerFunc(s.getVersionsJSON),
 		},
 	}
