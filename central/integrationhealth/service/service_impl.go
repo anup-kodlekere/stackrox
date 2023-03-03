@@ -23,8 +23,7 @@ var (
 			"/v1.IntegrationHealthService/GetImageIntegrations",
 			"/v1.IntegrationHealthService/GetNotifiers",
 		},
-		// TODO: ROX-12750 Replace ScannerDefinitions with Administration
-		user.With(permissions.View(resources.ScannerDefinitions)): {
+		user.With(permissions.View(resources.Administration)): {
 			"/v1.IntegrationHealthService/GetVulnDefinitionsInfo",
 		},
 	})
