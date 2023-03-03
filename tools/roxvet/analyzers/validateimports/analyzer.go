@@ -41,6 +41,7 @@ var (
 		"sensor/upgrader",
 		"tools",
 		"webhookserver",
+		"qa-tests-backend/test-images/syslog",
 	)
 
 	ignoredRoots = []string{
