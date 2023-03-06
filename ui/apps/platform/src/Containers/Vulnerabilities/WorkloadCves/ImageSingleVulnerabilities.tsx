@@ -17,6 +17,7 @@ import {
     TabsProps,
     Text,
     Title,
+    Flex,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { gql, useQuery } from '@apollo/client';
@@ -137,12 +138,12 @@ function ImageSingleVulnerabilities({ imageId }: ImageSingleVulnerabilitiesProps
         const severityCounts = severityCountsFromImageVulnerabilities(vulnerabilities);
         const cveStatusCounts = statusCountsFromImageVulnerabilities(vulnerabilities);
         // TODO Integrate these with page search filters
-        const hiddenSeverities = new Set<VulnerabilitySeverity>(['LOW_VULNERABILITY_SEVERITY']);
+        const hiddenSeverities = new Set<VulnerabilitySeverity>([]);
         const hiddenStatuses = new Set<FixableStatus>([]);
 
         mainContent = (
             <>
-                <Grid hasGutter>
+                <Grid hasGutter className="pf-u-py-md">
                     <GridItem sm={12} md={6} xl2={4}>
                         <BySeveritySummaryCard
                             title="CVEs by severity"
@@ -185,8 +186,13 @@ function ImageSingleVulnerabilities({ imageId }: ImageSingleVulnerabilitiesProps
                         title={<TabTitleText>Observed CVEs</TabTitleText>}
                     >
                         <PageSection variant="light" component="div" isFilled>
-                            <WorkloadTableToolbar />
-                            {mainContent}
+                            <Flex
+                                direction={{ default: 'column' }}
+                                spaceItems={{ default: 'spaceItemsMd' }}
+                            >
+                                <WorkloadTableToolbar />
+                                {mainContent}
+                            </Flex>
                         </PageSection>
                     </Tab>
                     <Tab
