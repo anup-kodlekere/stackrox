@@ -6,10 +6,11 @@ source "$ROOT/scripts/ci/lib.sh"
 set -euo pipefail
 
 run_powervs_tests() {
-    info "Powervs QA e2e tests stub"
+    info "PowerVS QA e2e tests"
 
-    kubectl get nodes -o wide || true
-    kubectl get version || true
+    export DEPLOY_STACKROX_VIA_OPERATOR="true"
+    
+    python3 -u rosa_qa_e2e_tests.py
 }
 
 run_powervs_tests "$*"
